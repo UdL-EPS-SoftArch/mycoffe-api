@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.List;
 
 //Attributes and methods of Product Class that extends UriEntity
 @EqualsAndHashCode(callSuper = true)
@@ -54,7 +54,7 @@ public class Product extends UriEntity<Long>{
     private List<Basket> baskets;
 
     @ManyToMany
-    private Order order;
+    private List<Order> orders;
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Loyalty> loyalties;
