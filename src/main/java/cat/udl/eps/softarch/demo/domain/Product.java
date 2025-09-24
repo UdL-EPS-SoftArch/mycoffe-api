@@ -19,6 +19,7 @@ import java.util.ArrayList;
 public class Product extends UriEntity<Long>{
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotEmpty
@@ -31,15 +32,17 @@ public class Product extends UriEntity<Long>{
     private String size;
     private String barcode;
     private BigDecimal tax;
-    private boolean available;
+    private boolean isAvailable;
     private String promotions;
     private String discount;
-    private int Kcal;
-    private int Carbs;
-    private int Proteins;
-    private int Fats;
-    private ArrayList<String> ingredients;
-    private ArrayList<String> allergens;
+    private int kcal;
+    private int carbs;
+    private int proteins;
+    private int fats;
+    @ElementCollection
+    private List<String> ingredients;
+    @ElementCollection
+    private List<String> allergens;
 
     @DecimalMin(value = "0")
     @DecimalMax(value = "5")
@@ -48,13 +51,13 @@ public class Product extends UriEntity<Long>{
     //TODO private Category category;
 
     @ManyToMany
-    private Basket basket;
+    private List<Basket> baskets;
 
     @ManyToMany
     private Order order;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private Loyalty loyalty;
+    private List<Loyalty> loyalties;
 
     @ManyToOne
     private Inventory inventory;
