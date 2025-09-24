@@ -19,10 +19,8 @@ public class Customer extends User {
     private String name;
 
     @NotEmpty
-    private String email;
+    private String phoneNumber;
 
-    @NotEmpty
-    private String password;
 
     @Override
     @ElementCollection
