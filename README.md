@@ -57,6 +57,7 @@ class Inventory { }
 class Product {
     name
     description
+    price
     stock
 }
 
