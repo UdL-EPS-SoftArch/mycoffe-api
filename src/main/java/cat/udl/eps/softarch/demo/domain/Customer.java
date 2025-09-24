@@ -16,9 +16,6 @@ import java.util.Collection;
 public class Customer extends User {
 
     @NotEmpty
-    private String phoneNumber;
-
-    @NotEmpty
     private String name;
 
     @NotEmpty
