@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 //Attributes and methods of Product Class that extends UriEntity
 @EqualsAndHashCode(callSuper = true)
