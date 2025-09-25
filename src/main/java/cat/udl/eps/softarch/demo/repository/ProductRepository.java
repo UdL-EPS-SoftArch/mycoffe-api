@@ -13,11 +13,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByPriceBetween(BigDecimal min, BigDecimal max);
     List<Product> findByRatingGreaterThanEqual(Double rating);
     List<Product> findByAvailable(boolean available);
-    List<Product> findByOrders(Order order);
-    List<Product> findByBaskets(Basket basket);
     List<Product> findByPromotions( String promotion);
     List<Product> findBySize(String size);
     List<Product> findByKcalLessThanEqual(int kcal);
     List<Product> findByIngredientsContaining(String ingredient);
     List<Product> findByAllergensContaining(String allergen);
+    //TODO  List<Product> findByOrders(Order order);
+    //      List<Product> findByBaskets(Basket basket);
+
 }
