@@ -6,45 +6,52 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+import java.util.Set;
+
 @Entity
 @Table(name="order")
 @Data
 public class Order extends UriEntity<String>{
 
     /**
-     * All attributes are String because we don't know exactly what kind of variable they are.
+     * Attributes are now defined but they are not probably the final variable.
      */
+
     @Setter
     @Id
     private String id;
 
     @NotBlank
-    private String created;
+    private LocalDateTime created;
 
     @NotBlank
-    private String serveWhen;
+    private LocalDateTime serveWhen;
 
     @NotBlank
     private String paymentMethod;
 
     @NotBlank
-    private enum Status{
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
+    public enum Status {
         RECEIVED, CANCELLED, IN_PROCESS, READY, PICKED
     }
+
+    /**
+     * Product and Customer are defined but we don't have the classes explicitly.
+     */
+
+    @ManyToMany
+    private Set<Product> products;
+
+    @ManyToOne
+    private Customer customer;
 
     @Override
     public String getId() {
         return id;
     }
-
-    /**
-     * Product and Customer will be implemented with and instance of his class.
-     * For now we will leave it as String for code clearness.
-     */
-    @ManyToMany
-    private String product;
-
-    @ManyToOne
-    private String customer;
 
 }
