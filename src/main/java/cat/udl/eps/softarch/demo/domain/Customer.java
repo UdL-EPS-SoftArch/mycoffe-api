@@ -1,6 +1,7 @@
 package cat.udl.eps.softarch.demo.domain;
 
-import jakarta.persistence.ElementCollection;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
@@ -23,8 +24,9 @@ public class Customer extends User {
 
 
     @Override
-    @ElementCollection
-    public Collection<GrantedAuthority> getAuthorities() {
+    @JsonValue(value = false)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    public Collection<? extends GrantedAuthority> getAuthorities() {
         return AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_CUSTOMER");
     }
 }
