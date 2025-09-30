@@ -27,4 +27,8 @@ public interface ProductRepository extends CrudRepository<Product, Long>, Paging
     //TODO  List<Product> findByOrders(Order order);
     //      List<Product> findByBaskets(Basket basket);
 
+    // Loyalty related queries
+    List<Product> findByIsPartOfLoyaltyProgram(boolean isPartOfLoyaltyProgram);
+    List<Product> findByPointsCostLessThanEqual(Integer points);
+    List<Product> findByPointsGivenGreaterThan(Integer points);
 }
