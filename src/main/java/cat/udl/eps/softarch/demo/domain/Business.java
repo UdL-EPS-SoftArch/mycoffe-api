@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "business")
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode
 public class Business {
 
     @Id
