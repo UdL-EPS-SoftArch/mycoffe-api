@@ -66,7 +66,6 @@ public class Product extends UriEntity<Long>{
     //    private Set<Order> orders;
 
     @ManyToOne
-    @JoinColumn( name = "category_id", nullable = false )
     private Category category;
 
     //TODO
