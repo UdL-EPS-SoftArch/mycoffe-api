@@ -39,7 +39,10 @@ Template for a Spring Boot project including Spring REST, HATEOAS, JPA, etc. Add
 ```mermaid
 classDiagram
 class Admin { }
-class Customer { }
+class Customer {
+    name
+    phoneNumber
+}
 class Basket { }
 class Order {
     created
