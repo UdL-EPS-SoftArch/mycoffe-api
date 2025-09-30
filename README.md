@@ -38,7 +38,13 @@ Template for a Spring Boot project including Spring REST, HATEOAS, JPA, etc. Add
 
 ```mermaid
 classDiagram
-class Admin { }
+class Admin {
+    id: Long
+    username: String
+    email: String
+    password: String
+    role: ADMIN
+}
 class Customer { }
 class Basket { }
 class Order {
@@ -48,10 +54,17 @@ class Order {
     status: [received, cancelled, in process, ready, picked]
 }
 class Business {
+    id: Long
+    name: String
+    address: String
     status: [applied, accepted, rejected]
+    owner: Admin
 }
 class Loyalty {
-    startDate
+    id: Long
+    startDate: LocalDate
+    customer: Customer
+    business: Business
 }
 class Inventory { }
 class Product {
@@ -74,6 +87,5 @@ Admin "1" -- "*" Business
 Customer "1" -- "*" Loyalty
 Basket "1" -- "1" Order
 Admin "1" -- "*" Product
-
 ```
 
