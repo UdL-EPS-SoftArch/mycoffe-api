@@ -86,6 +86,12 @@ Business "1" -- "*" Inventory
 Loyalty "*" -- "1" Product
 Inventory "1" -- "*" Product
 Product "*" -- "1" Category
+Business "1" -- "*" Order
+Business "1" -- "*" Product
+Admin "1" -- "*" Business
+Customer "1" -- "*" Loyalty
+Basket "1" -- "1" Order
+Admin "1" -- "*" Product
 
 ```
 
