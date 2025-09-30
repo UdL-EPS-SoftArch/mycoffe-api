@@ -54,10 +54,27 @@ class Loyalty {
     startDate
 }
 class Inventory { }
+class Category { }
 class Product {
+    id
     name
     description
+    price
     stock
+    brand
+    size
+    barcode
+    tax
+    isAvailable
+    promotions
+    discount
+    kcal
+    carbs
+    proteins
+    fats
+    ingredients
+    allergens
+    rating
 }
 
 Customer "1" -- "1" Basket
@@ -68,5 +85,7 @@ Business "1" -- "*" Loyalty
 Business "1" -- "*" Inventory
 Loyalty "*" -- "1" Product
 Inventory "1" -- "*" Product
+Product "*" -- "1" Category
+
 ```
 
