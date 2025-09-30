@@ -6,7 +6,6 @@ import lombok.*;
 import jakarta.validation.constraints.Pattern;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Set;
 
 //Attributes and methods of Product Class that extends UriEntity
@@ -16,7 +15,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class    Product extends UriEntity<Long>{
+public class Product extends UriEntity<Long>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -66,8 +65,8 @@ public class    Product extends UriEntity<Long>{
     // @ManyToMany(mappedBy = "products")
     //    private Set<Order> orders;
 
-
-    //TODO private Category category;
+    @ManyToOne
+    private Category category;
 
     //TODO
     // @ManyToMany
