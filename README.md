@@ -52,7 +52,6 @@ class Business {
     name: String
     address: String
     status: [applied, accepted, rejected]
-    owner: Admin
 }
 class Loyalty {
     startDate
