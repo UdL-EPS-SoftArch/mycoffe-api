@@ -48,7 +48,11 @@ class Order {
     status: [received, cancelled, in process, ready, picked]
 }
 class Business {
+    id: Long
+    name: String
+    address: String
     status: [applied, accepted, rejected]
+    owner: Admin
 }
 class Loyalty {
     startDate
