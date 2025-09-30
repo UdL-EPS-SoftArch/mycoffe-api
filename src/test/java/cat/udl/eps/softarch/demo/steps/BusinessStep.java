@@ -14,10 +14,20 @@ public class BusinessStep {
 
     private Business business;
 
-    @Given("a business with status {string}")
-    public void a_business_with_status(String status) {
-        business = new Business(BusinessStatus.valueOf(status));
+    @Given("a Business object with status {string}")
+    public void a_business_object_with_status(String status) {
+        business = new Business();
+        business.setStatus(BusinessStatus.valueOf(status));
     }
+
+
+    @Then("the Business object should have status {string}")
+    public void the_business_object_should_have_status(String expectedStatus) {
+        Assertions.assertNotNull(business, "The business object was not created");
+        Assertions.assertEquals(expectedStatus, business.getStatus().toString(), "The business status does not match");
+    }
+
+
 
     @When("I save the business")
     public void i_save_the_business() {

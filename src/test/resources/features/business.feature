@@ -1,10 +1,11 @@
-@business
-Feature: Business management
-  As an admin
-  I want to manage businesses
-  So that I can keep track of their status
 
-  Scenario: Create and retrieve a business
-    Given a business with status "APPLIED"
+@business
+Feature: Business creation
+  As a developer
+  I want to create a Business object
+  So that it is created correctly
+
+  Scenario: Create a Business object
+    Given a Business object with status "APPLIED"
     When I save the business
-    Then I should be able to retrieve it from the repository
+    Then the Business object should have status "APPLIED"
