@@ -10,6 +10,7 @@ import java.util.List;
 public interface CategoryRepository {
 
     List<Category> findByName(String name);
+    List<Category> findByDescription(String description);
     List<Category> findAll();
 
 }
