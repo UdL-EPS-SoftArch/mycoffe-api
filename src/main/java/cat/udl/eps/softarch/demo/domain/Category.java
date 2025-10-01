@@ -1,11 +1,10 @@
 package cat.udl.eps.softarch.demo.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+
+import java.util.Stack;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity(name = "Category")
@@ -21,4 +20,8 @@ public class Category extends UriEntity<Long> {
 
     @NotEmpty
     private String name;
+
+    @Column(length = 200)
+    private String description;
+
 }
