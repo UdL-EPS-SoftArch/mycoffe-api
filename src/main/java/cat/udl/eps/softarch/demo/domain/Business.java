@@ -1,69 +1,33 @@
 package cat.udl.eps.softarch.demo.domain;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+
+import java.util.Collection;
 
 @Entity
-@Table(name = "business")
 @Data
-@EqualsAndHashCode
-public class Business {
+@EqualsAndHashCode(callSuper = true)
+public class Business extends User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @NotBlank
-    @Column(nullable = false)
-    private String address;
-
-    @NotBlank
-    @Column(nullable = false)
+    @NotEmpty
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @NotEmpty
+    private String address;
+
     private BusinessStatus status;
 
-    public Business() {}
-
-    public Business(String name, String address, BusinessStatus status) {
-        this.name = name;
-        this.address = address;
-        this.status = status;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public BusinessStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(BusinessStatus status) {
-        this.status = status;
+    @Override
+    @JsonValue(false)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_BUSINESS");
     }
 }
