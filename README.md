@@ -53,7 +53,12 @@ class Business {
 class Loyalty {
     startDate
 }
-class Inventory { }
+class Inventory {
+    name
+    description
+    location
+    totalStock
+}
 class Product {
     name
     description
