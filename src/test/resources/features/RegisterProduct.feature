@@ -16,7 +16,7 @@ Feature: Register Product
     Then The response code is 409
     And The product with name "Orange" is not registered
 
-    
+
   Scenario: Register a product when not authenticated
     Given I'm not logged in
     When I register a new product with name "Apple"
