@@ -28,4 +28,5 @@ public class Basket extends UriEntity<Long> {
     public Long getId() {
         return id;
     }
+    //status
 }
