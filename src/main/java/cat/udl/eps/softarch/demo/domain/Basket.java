@@ -23,8 +23,10 @@ public class Basket extends UriEntity<Long> {
     private Long id;
 
     // Dueño de la relación
+    @NotNull
     @OneToOne
     @JoinColumn(name = "customer_id", unique = true)
+    @JsonIdentityReference(alwaysAsId = true)
     private Customer customer;
 
     @Override
