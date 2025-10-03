@@ -8,8 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.ZonedDateTime;
 
-@EqualsAndHashCode(callSuper = true)
-@Entity(name = "Loyalty")
+@Entity
 @Data
 @Builder
 @NoArgsConstructor

@@ -54,7 +54,6 @@ class Business {
     status: [applied, accepted, rejected]
 }
 class Loyalty {
-    cardNumber
     startDate
     accumulatedPoints
 }
