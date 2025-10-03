@@ -27,7 +27,7 @@ public class User extends UriEntity<String> implements UserDetails {
 	public static PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 	@Id
-	private String id;
+	private String id; // este id (lo seleccioa el usuario) pero mejir no dejarle q escoja y q no sea su user.name
 
 	@NotBlank
 	@Email
