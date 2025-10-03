@@ -2,7 +2,7 @@ package cat.udl.eps.softarch.demo.repository;
 
 import cat.udl.eps.softarch.demo.domain.Loyalty;
 import cat.udl.eps.softarch.demo.domain.Customer;
-// import cat.udl.eps.softarch.demo.domain.Business; // Uncomment after implementing the business class
+import cat.udl.eps.softarch.demo.domain.Business;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -13,8 +13,6 @@ public interface LoyaltyRepository extends PagingAndSortingRepository<Loyalty, L
     List<Loyalty> findByCustomer(Customer customer);
     List<Loyalty> findByAccumulatedPointsGreaterThanEqual(Integer points);
     List<Loyalty> findByCustomerOrderByStartDateDesc(Customer customer);
-    
-    // Uncomment after implementing the business class
-    // List<Loyalty> findByCustomerAndBusiness(Customer customer, Business business);
-    // List<Loyalty> findByBusiness(Business business);
+    List<Loyalty> findByCustomerAndBusiness(Customer customer, Business business);
+    List<Loyalty> findByBusiness(Business business);
 }

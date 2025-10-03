@@ -26,13 +26,10 @@ public class Loyalty extends UriEntity<Long> {
     @NotNull
     @ManyToOne
     private Customer customer;
-/*
-    Uncomment after implementing the business class
 
     @NotNull
     @ManyToOne
     private Business business;
-*/
 
     @NotNull
     @PositiveOrZero
