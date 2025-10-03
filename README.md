@@ -59,7 +59,13 @@ class Business {
 class Loyalty {
     startDate
 }
-class Inventory { }
+class Inventory {
+    name
+    description
+    location
+    totalStock
+}
+
 class Category { }
 class Product {
     id
@@ -92,5 +98,6 @@ Business "1" -- "*" Inventory
 Loyalty "*" -- "1" Product
 Inventory "1" -- "*" Product
 Product "*" -- "1" Category
+
 
 ```
