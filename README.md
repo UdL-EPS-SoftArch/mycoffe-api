@@ -51,6 +51,9 @@ class Order {
     status: [received, cancelled, in process, ready, picked]
 }
 class Business {
+    id: Long
+    name: String
+    address: String
     status: [applied, accepted, rejected]
 }
 class Loyalty {
@@ -93,4 +96,3 @@ Inventory "1" -- "*" Product
 Product "*" -- "1" Category
 
 ```
-
