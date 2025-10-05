@@ -34,7 +34,7 @@ import org.springframework.web.context.WebApplicationContext;
 @DirtiesContext
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
-@ActiveProfiles("Test")
+@ActiveProfiles("test")
 @CucumberContextConfiguration
 public class StepDefs {
 

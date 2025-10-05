@@ -39,6 +39,22 @@ public class DBInitialization {
                 user.encodePassword();
                 userRepository.save(user);
             }
+            if (!userRepository.existsById("admin")) {
+                User admin = new User();
+                admin.setEmail("admin@sample.app");
+                admin.setId("admin");
+                admin.setPassword(defaultPassword);
+                admin.encodePassword();
+                userRepository.save(admin);
+            }
+            if (!userRepository.existsById("user")) {
+                User regularUser = new User();
+                regularUser.setEmail("user@sample.app");
+                regularUser.setId("user");
+                regularUser.setPassword(defaultPassword);
+                regularUser.encodePassword();
+                userRepository.save(regularUser);
+            }
         }
     }
 }

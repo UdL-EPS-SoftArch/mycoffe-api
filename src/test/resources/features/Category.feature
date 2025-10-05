@@ -21,7 +21,7 @@ Feature: Register Category
   Scenario: Register category when not authenticated
     Given I'm not logged in
     When I register a new category with name "Coffee" and description "Premium coffee products"
-    Then The response code is 401
+    Then The response code is 403
     And It has not been created a category with name "Coffee"
 
   Scenario: Register category with empty name

@@ -1,10 +1,9 @@
 package cat.udl.eps.softarch.demo.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-
-import java.util.Stack;
+import org.hibernate.validator.constraints.Length;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity(name = "Category")
@@ -17,11 +16,14 @@ public class Category extends UriEntity<Long> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    @NotEmpty
+    @NotBlank
+    @Length(min = 1, max = 50)
+    @Column(unique = true)
     private String name;
 
-    @Column(length = 200)
+    @NotBlank
+    @Length(min = 1, max = 255)
+    @Column(length = 255)
     private String description;
 
 }
