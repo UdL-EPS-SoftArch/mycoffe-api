@@ -29,4 +29,13 @@ public class Customer extends User {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_CUSTOMER");
     }
+
+    //TODO (Basket)
+    // @OneToOne
+    // private Basket basket;
+
+    //TODO
+    // @OneToMany(mappedBy = "products")
+    // private Set<Order> orders;
+
 }
