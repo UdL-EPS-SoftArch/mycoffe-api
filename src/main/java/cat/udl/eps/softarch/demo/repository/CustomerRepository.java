@@ -1,0 +1,14 @@
+package cat.udl.eps.softarch.demo.repository;
+
+import cat.udl.eps.softarch.demo.domain.Customer;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
+
+import java.util.List;
+
+public interface CustomerRepository extends CrudRepository<Customer, Long>, PagingAndSortingRepository<Customer, Long> {
+
+    List<Customer> findByPhoneNumber(String phone);
+    List<Customer> findByName(String name);
+
+}
