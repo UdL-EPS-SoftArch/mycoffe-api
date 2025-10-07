@@ -30,7 +30,7 @@ public class Customer extends User {
         return AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_CUSTOMER");
     }
 
-    //TODO (Basket)
+    //TODO
     // @OneToOne
     // private Basket basket;
 
@@ -38,4 +38,7 @@ public class Customer extends User {
     // @OneToMany(mappedBy = "products")
     // private Set<Order> orders;
 
+    //TODO
+    // @OneToOne
+    // private Loyalty loyalty;
 }
