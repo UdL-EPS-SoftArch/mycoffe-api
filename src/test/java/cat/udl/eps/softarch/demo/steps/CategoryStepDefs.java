@@ -5,7 +5,7 @@ import cat.udl.eps.softarch.demo.repository.CategoryRepository;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
-import org.junit.Assert;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
@@ -30,8 +30,8 @@ public class CategoryStepDefs {
 
     @Given("^There is no registered category with name \"([^\"]*)\"$")
     public void thereIsNoRegisteredCategoryWithName(String name) {
-        Assert.assertFalse("Category \"" + name + "\" shouldn't exist",
-                categoryRepository.findByName(name).isPresent());
+        assertFalse(categoryRepository.findByName(name).isPresent(),
+                "Category \"" + name + "\" shouldn't exist");
     }
 
     @Given("^There is a registered category with name \"([^\"]*)\" and description \"([^\"]*)\"$")
@@ -88,8 +88,9 @@ public class CategoryStepDefs {
     public void theCategoryDescriptionRemains(String description) throws Exception {
         // After a 409 conflict, we need to fetch the existing category to verify its description
         Optional<Category> existingCategory = categoryRepository.findByName(currentCategory.getName());
-        Assert.assertTrue("Category should exist", existingCategory.isPresent());
-        Assert.assertEquals("Description should remain unchanged", description, existingCategory.get().getDescription());
+        assertTrue(existingCategory.isPresent(), "Category should exist");
+        assertEquals(description, existingCategory.get().getDescription(),
+                "Description should remain unchanged");
     }
 
     @And("^It has not been created a category with name \"([^\"]*)\"$")
