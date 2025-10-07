@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import java.util.List;
 
 @Entity
-@Table(name = "inventory")
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Inventory extends User {
