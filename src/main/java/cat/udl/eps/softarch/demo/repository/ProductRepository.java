@@ -1,0 +1,30 @@
+package cat.udl.eps.softarch.demo.repository;
+
+import cat.udl.eps.softarch.demo.domain.Product;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+
+
+import java.math.BigDecimal;
+import java.util.List;
+
+@RepositoryRestResource
+public interface ProductRepository extends CrudRepository<Product, Long>, PagingAndSortingRepository<Product, Long> {
+
+
+    List<Product> findByName(String name);
+    List<Product> findByBrand(String brand);
+    List<Product> findByPriceBetween(BigDecimal min, BigDecimal max);
+    List<Product> findByRatingGreaterThanEqual(Double rating);
+    List<Product> findByIsAvailable(boolean available);
+    List<Product> findByPromotions( String promotion);
+    List<Product> findBySize(String size);
+    List<Product> findByKcalLessThanEqual(int kcal);
+    List<Product> findByIngredientsContaining(String ingredient);
+    List<Product> findByAllergensContaining(String allergen);
+
+    //TODO  List<Product> findByOrders(Order order);
+    //      List<Product> findByBaskets(Basket basket);
+
+}
