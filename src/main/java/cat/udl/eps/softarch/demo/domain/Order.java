@@ -39,10 +39,6 @@ public class Order extends UriEntity<String>{
         RECEIVED, CANCELLED, IN_PROCESS, READY, PICKED
     }
 
-    /**
-     * Product and Customer are defined but we don't have the classes explicitly.
-     */
-
     @ManyToMany
     private Set<Product> products;
 
