@@ -3,6 +3,7 @@ Feature: Register User
   As a user
   I want to register myself and get an account
 
+  Scenario: Register succesfully
     Given There is no registered user with username "user"
     And I'm not logged in
     When I register a new user with username "user", email "user@sample.app" and password "password"

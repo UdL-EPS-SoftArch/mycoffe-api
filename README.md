@@ -51,10 +51,14 @@ class Order {
     status: [received, cancelled, in process, ready, picked]
 }
 class Business {
+    id: Long
+    name: String
+    address: String
     status: [applied, accepted, rejected]
 }
 class Loyalty {
     startDate
+    accumulatedPoints
 }
 class Inventory {
     name
@@ -84,18 +88,18 @@ class Product {
     ingredients
     allergens
     rating
+    pointsGiven
+    pointsCost
+    isPartOfLoyaltyProgram
 }
 
 Customer "1" -- "1" Basket
 Customer "1" -- "*" Order
+Customer "1" -- "*" Loyalty
 Basket "*" -- "*" Product
 Order "*" -- "*" Product
 Business "1" -- "*" Loyalty
 Business "1" -- "*" Inventory
-Loyalty "*" -- "1" Product
 Inventory "1" -- "*" Product
 Product "*" -- "1" Category
-
-
 ```
-
