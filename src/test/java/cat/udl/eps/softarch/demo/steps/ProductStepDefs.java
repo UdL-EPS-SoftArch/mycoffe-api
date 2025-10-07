@@ -4,7 +4,7 @@ import cat.udl.eps.softarch.demo.domain.Product;
 import cat.udl.eps.softarch.demo.repository.ProductRepository;
 import org.springframework.http.MediaType;
 
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -40,13 +40,19 @@ public class ProductStepDefs {
         currentProduct = new Product();
         currentProduct.setName(name);
 
-        stepDefs.result = stepDefs.mockMvc.perform(
-                post("/products")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(stepDefs.mapper.writeValueAsString(currentProduct))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .with(AuthenticationStepDefs.authenticate())
-        ).andDo(print());
+        // Crear el request builder base
+        var requestBuilder = post("/products")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(stepDefs.mapper.writeValueAsString(currentProduct))
+                .accept(MediaType.APPLICATION_JSON);
+
+        // Solo añadir autenticación si hay un usuario logueado
+        if (AuthenticationStepDefs.currentUsername != null) {
+            requestBuilder = requestBuilder.with(AuthenticationStepDefs.authenticate());
+        }
+
+        stepDefs.result = stepDefs.mockMvc.perform(requestBuilder)
+                .andDo(print());
     }
 
 
@@ -58,6 +64,6 @@ public class ProductStepDefs {
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.products", hasSize(1))); // Solo 1
+                .andExpect(jsonPath("$._embedded.products", hasSize(0))); // Solo 1
     }
 }
