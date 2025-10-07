@@ -21,7 +21,7 @@ Feature: Register Order
     Given I'm not logged in
     When I register a new order with id "3"
     Then The response code is 403
-    And The order with name "3" is not registered
+    And The order with id "3" is not registered
 
 
   Scenario: Register a order with empty name
