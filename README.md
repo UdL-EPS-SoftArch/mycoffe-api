@@ -60,7 +60,12 @@ class Loyalty {
     startDate
     accumulatedPoints
 }
-class Inventory { }
+class Inventory {
+    name
+    description
+    location
+    totalStock
+}
 class Category {
     name
 }
