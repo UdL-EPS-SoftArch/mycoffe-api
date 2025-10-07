@@ -22,6 +22,7 @@ public class Product extends UriEntity<Long>{
     private Long id;
 
     @NotEmpty
+    @Column(unique = true, nullable = false)
     private String name;
 
     @Column(length = 100)

@@ -3,9 +3,12 @@ package cat.udl.eps.softarch.demo.steps;
 import cat.udl.eps.softarch.demo.domain.Product;
 import cat.udl.eps.softarch.demo.repository.ProductRepository;
 import org.springframework.http.MediaType;
+
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
@@ -48,12 +51,13 @@ public class ProductStepDefs {
 
 
     @And("^The product with name \"([^\"]*)\" is not registered$")
-    public void theProductWithNameIsNotRegistered(String productName) throws Throwable {
+    public void theProductWithNameIsNotRegistered(String productName) throws Exception {
         stepDefs.result = stepDefs.mockMvc.perform(
-                        get("/products")
+                        get("/products/search/findByName")
                                 .param("name", productName)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.products", hasSize(1))); // Solo 1
     }
 }

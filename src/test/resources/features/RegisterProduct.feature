@@ -6,13 +6,14 @@ Feature: Register Product
 
   Scenario: Register a new product successfully
     Given I login as "demo" with password "password"
-    When I register a new product with name "Coffee"
+    When I register a new product with name "Orange"
     Then The response code is 201
 
 
   Scenario: Register a new product that already exists
     Given I login as "demo" with password "password"
-    When I register a new product with name "Coffee"
+    And I register a new product with name "Orange"
+    When I register a new product with name "Orange"
     Then The response code is 409
     And The product with name "Orange" is not registered
 
