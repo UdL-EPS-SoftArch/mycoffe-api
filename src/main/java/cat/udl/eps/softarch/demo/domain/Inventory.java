@@ -1,5 +1,6 @@
 package cat.udl.eps.softarch.demo.domain;
 
+import cat.udl.eps.softarch.demo.domain.UriEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -9,19 +10,19 @@ import java.util.List;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Inventory extends User {
+public class Inventory extends UriEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
-    private String name;       
+    private String name;
 
-    private String description; 
+    private String description;
 
     @NotBlank
-    private String location;   
+    private String location;
 
-    private int totalStock;    
+    private int totalStock;
 }
