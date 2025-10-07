@@ -3,6 +3,7 @@ package cat.udl.eps.softarch.demo.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.Setter;
 
@@ -22,16 +23,16 @@ public class Order extends UriEntity<String>{
     @Id
     private String id;
 
-    @NotBlank
+    @NotNull
     private LocalDateTime created;
 
-    @NotBlank
+    @NotNull
     private LocalDateTime serveWhen;
 
     @NotBlank
     private String paymentMethod;
 
-    @NotBlank
+    @NotNull
     @Enumerated(EnumType.STRING)
     private Status status;
 
