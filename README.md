@@ -61,7 +61,9 @@ class Loyalty {
     accumulatedPoints
 }
 class Inventory { }
-class Category { }
+class Category {
+    name
+}
 class Product {
     id
     name
