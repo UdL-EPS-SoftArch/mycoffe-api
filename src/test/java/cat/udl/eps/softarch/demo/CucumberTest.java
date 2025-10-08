@@ -1,11 +1,8 @@
 package cat.udl.eps.softarch.demo;
 
-import io.cucumber.junit.Cucumber;
-import io.cucumber.junit.CucumberOptions;
-import org.junit.runner.RunWith;
+import io.cucumber.junit.platform.engine.Cucumber;
 
-@RunWith(Cucumber.class)
-@CucumberOptions(plugin={"pretty"}, features="src/test/resources")
+@Cucumber
 public class CucumberTest {
 
 }
