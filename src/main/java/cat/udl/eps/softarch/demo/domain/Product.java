@@ -62,6 +62,16 @@ public class Product extends UriEntity<Long>{
     @DecimalMax(value = "5")
     private Double rating;
 
+    // Loyalty program related fields
+    @PositiveOrZero
+    private Integer pointsGiven; // Points given when purchasing this product
+    
+    @PositiveOrZero
+    private Integer pointsCost;  // Points needed to redeem this product
+    
+    private boolean isPartOfLoyaltyProgram;
+
+    
     //TODO
     // @ManyToMany(mappedBy = "products")
     //    private Set<Order> orders;
