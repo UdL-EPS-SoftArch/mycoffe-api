@@ -25,4 +25,7 @@ public class Inventory extends UriEntity {
     private String location;
 
     private int totalStock;
+
+    @ManyToOne
+    private Business business;
 }
