@@ -87,10 +87,9 @@ public class Product extends UriEntity<Long>{
     //TODO
     // @OneToMany(cascade = CascadeType.ALL)
     // private Set<Loyalty> loyalties;
-    //
-    //TODO
-    // @ManyToOne
-    // private Inventory inventory;
+
+    @ManyToOne
+    private Inventory inventory;
 
 
 }
