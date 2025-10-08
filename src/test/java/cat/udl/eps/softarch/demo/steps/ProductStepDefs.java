@@ -23,8 +23,6 @@ public class ProductStepDefs {
     @Autowired
     private StepDefs stepDefs;
 
-    public static String currentUsername;
-    public static String currentPassword;
     public static Product currentProduct;
 
     @Autowired
@@ -55,6 +53,16 @@ public class ProductStepDefs {
                 .andDo(print());
     }
 
+    @And("^The product with name \"([^\"]*)\" is registered$")
+    public void theProductWithNameIsRegistered(String productName) throws Exception {
+
+        if (productRepository.findByName(productName).isEmpty()) {
+            Product product = new Product();
+            product.setName(productName);
+            productRepository.save(product);
+        }
+
+    }
 
     @And("^The product with name \"([^\"]*)\" is not registered$")
     public void theProductWithNameIsNotRegistered(String productName) throws Exception {

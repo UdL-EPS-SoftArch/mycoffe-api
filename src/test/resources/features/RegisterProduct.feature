@@ -12,16 +12,15 @@ Feature: Register Product
 
   Scenario: Register a new product that already exists
     Given I login as "demo" with password "password"
-    And I register a new product with name "Orange"
+    And The product with name "Orange" is registered
     When I register a new product with name "Orange"
     Then The response code is 409
-    And The product with name "Orange" is not registered
 
 
   Scenario: Register a product when not authenticated
     Given I'm not logged in
     When I register a new product with name "Apple"
-    Then The response code is 403
+    Then The response code is 401
     And The product with name "Apple" is not registered
 
 
