@@ -26,6 +26,5 @@ public class Inventory extends UriEntity {
 
     private int totalStock;
 
-    @ManyToOne
-    private Business Business;
+
 }
