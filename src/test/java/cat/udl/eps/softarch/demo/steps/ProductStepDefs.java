@@ -14,8 +14,10 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.MvcResult;
 
-
+import java.math.BigDecimal;
+import java.util.Map;
 
 
 public class ProductStepDefs {
@@ -33,24 +35,72 @@ public class ProductStepDefs {
         //Mirar si es bona practica ficar un step de el RegisterStepDefs
     }
 
-    @When("^I register a new product with name \"([^\"]*)\"$")
-    public void iRegisterANewProductWithName(String name) throws Exception {
-        currentProduct = new Product();
-        currentProduct.setName(name);
+    /**
+     * Converteix un Map<String, String> en un Product, mapejant només els camps presents.
+     */
+    private Product fromMap(Map<String, String> data) {
+        Product p = new Product();
 
-        // Crear el request builder base
+        // ⭐ Valores por defecto para campos con validaciones
+        p.setStock(0);
+        p.setKcal(0);
+        p.setCarbs(0);
+        p.setProteins(0);
+        p.setFats(0);
+        p.setAvailable(true);  // Disponible por defecto
+
+        // Sobrescribir con los datos del test
+        data.forEach((key, value) -> {
+            if (value == null || value.isBlank()) return;
+            switch (key) {
+                case "name" -> p.setName(value);
+                case "price" -> p.setPrice(new BigDecimal(value));
+                case "stock" -> p.setStock(Integer.parseInt(value));
+                case "barcode" -> p.setBarcode(value);
+                case "rating" -> p.setRating(Double.parseDouble(value));
+                case "tax" -> p.setTax(new BigDecimal(value));
+                case "kcal" -> p.setKcal(Integer.parseInt(value));
+                case "carbs" -> p.setCarbs(Integer.parseInt(value));
+                case "proteins" -> p.setProteins(Integer.parseInt(value));
+                case "fats" -> p.setFats(Integer.parseInt(value));
+                case "pointsGiven" -> p.setPointsGiven(Integer.parseInt(value));
+                case "pointsCost" -> p.setPointsCost(Integer.parseInt(value));
+                case "isAvailable" -> p.setAvailable(Boolean.parseBoolean(value));
+                case "brand" -> p.setBrand(value);
+                case "description" -> p.setDescription(value);
+                case "discount" -> p.setDiscount(value);
+                case "size" -> p.setSize(value);
+                case "promotions" -> p.setPromotions(value);
+                default -> System.out.println("⚠️ Campo desconocido: " + key);
+            }
+        });
+
+        return p;
+    }
+
+    @When("^I register a new product with the following details:$")
+    public void iRegisterANewProductWithDetails(Map<String, String> productData) throws Exception {
+        currentProduct = fromMap(productData);
+
+        // 🔍 DEBUG (quitar después)
+        String jsonBody = stepDefs.mapper.writeValueAsString(currentProduct);
+        System.out.println("📤 JSON enviado: " + jsonBody);
+
         var requestBuilder = post("/products")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(stepDefs.mapper.writeValueAsString(currentProduct))
+                .content(jsonBody)
                 .accept(MediaType.APPLICATION_JSON);
 
-        // Solo añadir autenticación si hay un usuario logueado
         if (AuthenticationStepDefs.currentUsername != null) {
             requestBuilder = requestBuilder.with(AuthenticationStepDefs.authenticate());
         }
 
-        stepDefs.result = stepDefs.mockMvc.perform(requestBuilder)
-                .andDo(print());
+        stepDefs.result = stepDefs.mockMvc.perform(requestBuilder).andDo(print());
+
+        // 🔍 DEBUG (quitar después)
+        MvcResult mvcresult = stepDefs.result.andDo(print()).andReturn();
+        String responseBody = mvcresult.getResponse().getContentAsString();
+        System.out.println("📥 Respuesta: " + responseBody);
     }
 
     @And("^The product with name \"([^\"]*)\" is registered$")
