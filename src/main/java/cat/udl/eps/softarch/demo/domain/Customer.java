@@ -1,8 +1,11 @@
 package cat.udl.eps.softarch.demo.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,6 +25,9 @@ public class Customer extends User {
     @NotEmpty
     private String phoneNumber;
 
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIdentityReference(alwaysAsId = true)
+    private Basket basket;
 
     @Override
     @JsonValue(value = false)
@@ -30,9 +36,6 @@ public class Customer extends User {
         return AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_CUSTOMER");
     }
 
-    //TODO
-    // @OneToOne
-    // private Basket basket;
 
     //TODO
     // @OneToMany(mappedBy = "products")
