@@ -19,7 +19,6 @@ public class Basket extends UriEntity<Long> {
 
     @NotNull
     @OneToOne
-    @JoinColumn(name = "customer_id", unique = true, nullable = false)
     @JsonIdentityReference(alwaysAsId = true)
     private Customer customer;
 

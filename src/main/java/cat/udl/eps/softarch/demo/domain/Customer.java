@@ -25,10 +25,6 @@ public class Customer extends User {
     @NotEmpty
     private String phoneNumber;
 
-    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIdentityReference(alwaysAsId = true)
-    private Basket basket;
-
     @Override
     @JsonValue(value = false)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
