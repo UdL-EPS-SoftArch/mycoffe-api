@@ -6,7 +6,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
 
-public interface CustomerRepository extends CrudRepository<Customer, Long>, PagingAndSortingRepository<Customer, Long> {
+public interface CustomerRepository extends CrudRepository<Customer, String>, PagingAndSortingRepository<Customer, String> {
 
     List<Customer> findByPhoneNumber(String phone);
     List<Customer> findByName(String name);
