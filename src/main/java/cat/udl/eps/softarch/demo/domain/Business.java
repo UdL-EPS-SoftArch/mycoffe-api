@@ -35,10 +35,6 @@ public class Business extends User {
         return AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_BUSINESS");
     }
 
-    @OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Loyalty> loyaltyPrograms = new ArrayList<>();
 
-    @OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Inventory> inventories = new ArrayList<>();
 
 }
