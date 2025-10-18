@@ -22,6 +22,7 @@ public class Product extends UriEntity<Long>{
     private Long id;
 
     @NotEmpty
+    @Column(unique = true, nullable = false)
     private String name;
 
     @Column(length = 100)
@@ -82,14 +83,8 @@ public class Product extends UriEntity<Long>{
     // @ManyToMany
     // private Set<Basket> baskets;
 
-
-    //TODO
-    // @OneToMany(cascade = CascadeType.ALL)
-    // private Set<Loyalty> loyalties;
-    //
-    //TODO
-    // @ManyToOne
-    // private Inventory inventory;
+    @ManyToOne
+    private Inventory inventory;
 
 
 }

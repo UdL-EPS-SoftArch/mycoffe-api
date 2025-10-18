@@ -3,9 +3,12 @@ package cat.udl.eps.softarch.demo.steps;
 import cat.udl.eps.softarch.demo.domain.Product;
 import cat.udl.eps.softarch.demo.repository.ProductRepository;
 import org.springframework.http.MediaType;
+
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
@@ -20,8 +23,6 @@ public class ProductStepDefs {
     @Autowired
     private StepDefs stepDefs;
 
-    public static String currentUsername;
-    public static String currentPassword;
     public static Product currentProduct;
 
     @Autowired
@@ -37,23 +38,40 @@ public class ProductStepDefs {
         currentProduct = new Product();
         currentProduct.setName(name);
 
-        stepDefs.result = stepDefs.mockMvc.perform(
-                post("/products")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(stepDefs.mapper.writeValueAsString(currentProduct))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .with(AuthenticationStepDefs.authenticate())
-        ).andDo(print());
+        // Crear el request builder base
+        var requestBuilder = post("/products")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(stepDefs.mapper.writeValueAsString(currentProduct))
+                .accept(MediaType.APPLICATION_JSON);
+
+        // Solo añadir autenticación si hay un usuario logueado
+        if (AuthenticationStepDefs.currentUsername != null) {
+            requestBuilder = requestBuilder.with(AuthenticationStepDefs.authenticate());
+        }
+
+        stepDefs.result = stepDefs.mockMvc.perform(requestBuilder)
+                .andDo(print());
     }
 
+    @And("^The product with name \"([^\"]*)\" is registered$")
+    public void theProductWithNameIsRegistered(String productName) throws Exception {
+
+        if (productRepository.findByName(productName).isEmpty()) {
+            Product product = new Product();
+            product.setName(productName);
+            productRepository.save(product);
+        }
+
+    }
 
     @And("^The product with name \"([^\"]*)\" is not registered$")
-    public void theProductWithNameIsNotRegistered(String productName) throws Throwable {
+    public void theProductWithNameIsNotRegistered(String productName) throws Exception {
         stepDefs.result = stepDefs.mockMvc.perform(
-                        get("/products")
+                        get("/products/search/findByName")
                                 .param("name", productName)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.products", hasSize(0))); // Solo 1
     }
 }

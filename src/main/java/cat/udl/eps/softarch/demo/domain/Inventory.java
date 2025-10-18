@@ -28,4 +28,6 @@ public class Inventory extends UriEntity {
 
     @ManyToOne
     private Business business;
+
+
 }
