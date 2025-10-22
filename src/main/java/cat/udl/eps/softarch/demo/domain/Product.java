@@ -22,6 +22,7 @@ public class Product extends UriEntity<Long>{
     private Long id;
 
     @NotEmpty
+    @Column(unique = true, nullable = false)
     private String name;
 
     @Column(length = 100)
@@ -61,6 +62,16 @@ public class Product extends UriEntity<Long>{
     @DecimalMax(value = "5")
     private Double rating;
 
+    // Loyalty program related fields
+    @PositiveOrZero
+    private Integer pointsGiven; // Points given when purchasing this product
+    
+    @PositiveOrZero
+    private Integer pointsCost;  // Points needed to redeem this product
+    
+    private boolean isPartOfLoyaltyProgram;
+
+    
     //TODO
     // @ManyToMany(mappedBy = "products")
     //    private Set<Order> orders;
@@ -72,14 +83,8 @@ public class Product extends UriEntity<Long>{
     // @ManyToMany
     // private Set<Basket> baskets;
 
-
-    //TODO
-    // @OneToMany(cascade = CascadeType.ALL)
-    // private Set<Loyalty> loyalties;
-    //
-    //TODO
-    // @ManyToOne
-    // private Inventory inventory;
+    @ManyToOne
+    private Inventory inventory;
 
 
 }
