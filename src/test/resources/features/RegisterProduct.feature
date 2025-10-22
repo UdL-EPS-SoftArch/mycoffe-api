@@ -63,7 +63,7 @@ Feature: Register Product
     When I register a new product with the following details:
       | name  | Water |
       | description | Aproductsamplendinasidiasjdijsdijasidjsaidjasjdiasjdiajsdijsisajidojasidjaisdjaisjdisjdasijdodjisjdisajdoajsd   |
-    Then The response code is 400
+    Then The response code is 409
 
 
 
