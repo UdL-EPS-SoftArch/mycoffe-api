@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 
-public class ProductStepDefs {
+public class CreateProductStepDefs {
 
     @Autowired
     private StepDefs stepDefs;
