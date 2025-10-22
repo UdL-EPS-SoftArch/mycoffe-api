@@ -79,10 +79,17 @@ public class ProductStepDefs {
     }
 
     @When("^I register a new product with the following details:$")
-    public void iRegisterANewProductWithDetails(Map<String, String> productData) throws Exception {
+    public void iRegisterANewProductWithDetails(io.cucumber.datatable.DataTable dataTable) throws Exception {
+        // Convertir la tabla correctamente (primera fila = headers, segunda = valores)
+        Map<String, String> productData = dataTable.asMap(String.class, String.class);
+
+        // 🔍 DEBUG: Ver qué recibe de Cucumber
+        System.out.println("📋 Datos recibidos de Cucumber:");
+        productData.forEach((k, v) -> System.out.println("  " + k + " = " + v));
+
         currentProduct = fromMap(productData);
 
-        // 🔍 DEBUG (quitar después)
+        // 🔍 DEBUG
         String jsonBody = stepDefs.mapper.writeValueAsString(currentProduct);
         System.out.println("📤 JSON enviado: " + jsonBody);
 
@@ -97,8 +104,8 @@ public class ProductStepDefs {
 
         stepDefs.result = stepDefs.mockMvc.perform(requestBuilder).andDo(print());
 
-        // 🔍 DEBUG (quitar después)
-        MvcResult mvcresult = stepDefs.result.andDo(print()).andReturn();
+        // 🔍 DEBUG
+        MvcResult mvcresult = stepDefs.result.andReturn();
         String responseBody = mvcresult.getResponse().getContentAsString();
         System.out.println("📥 Respuesta: " + responseBody);
     }
