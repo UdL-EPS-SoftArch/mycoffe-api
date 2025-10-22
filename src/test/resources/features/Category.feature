@@ -4,7 +4,8 @@ Feature: Register Category
   I want to register categories and manage them
 
   Background:
-    Given There is a registered user with username "demo" and password "password" and email "demo@email.org"
+    Given There is a registered admin with username "admin" and password "password" and email "admin@sample.app"
+    And There is a registered user with username "demo" and password "password" and email "demo@email.org"
 
   Scenario: Register category successfully
     Given There is no registered category with name "Sweet"
