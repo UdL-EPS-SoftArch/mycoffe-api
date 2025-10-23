@@ -9,8 +9,8 @@ Feature: Get Product
   Scenario: Get product with valid ID
     Given I login as "demo" with password "password"
     And A product exists with the following details:
-      | name  | price |
-      | Apple | 1.80  |
+      | name  | Apple |
+      | price | 1.80  |
     When I request the product with id "1"
     Then The response code is 200
 
