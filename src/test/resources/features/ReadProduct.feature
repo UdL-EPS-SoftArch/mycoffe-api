@@ -25,8 +25,8 @@ Feature: Get Product
   Scenario: Get product with valid name
     Given I login as "demo" with password "password"
     And A product exists with the following details:
-      | name   | price |
-      | Orange | 2.50  |
+      | name   | Orange |
+      | price | 2.50  |
     When I request the product with id "1"
     Then The response code is 200
     And The response contains a product with name "Orange"
@@ -34,7 +34,10 @@ Feature: Get Product
   Scenario: Search product with name that does not exist
     Given I login as "demo" with password "password"
     When I search for products with name "NonExistentProduct"
-    Then The response code is 404
+    Then The response code is 200
+    # Spring Data REST devuelve 200 con
+      # lista vacía cuando no encuentra resultados, no 404.
+    And The response contains 0 products
 
 
   # ========== ATRIBUTO: price ==========
