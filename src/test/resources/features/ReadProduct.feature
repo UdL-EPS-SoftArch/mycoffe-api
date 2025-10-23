@@ -25,8 +25,8 @@ Feature: Get Product
   Scenario: Get product with valid name
     Given I login as "demo" with password "password"
     And A product exists with the following details:
-      | name   | Orange |
-      | price | 2.50  |
+      | name  | Orange |
+      | price | 2.50   |
     When I request the product with id "1"
     Then The response code is 200
     And The response contains a product with name "Orange"
@@ -35,8 +35,6 @@ Feature: Get Product
     Given I login as "demo" with password "password"
     When I search for products with name "NonExistentProduct"
     Then The response code is 200
-    # Spring Data REST devuelve 200 con
-      # lista vacía cuando no encuentra resultados, no 404.
     And The response contains 0 products
 
 
@@ -45,8 +43,8 @@ Feature: Get Product
   Scenario: Get product with valid price
     Given I login as "demo" with password "password"
     And A product exists with the following details:
-      | name   | price |
-      | Banana | 0.90  |
+      | name  | Banana |
+      | price | 0.90   |
     When I request the product with id "1"
     Then The response code is 200
     And The response contains a product with price "0.90"
@@ -54,8 +52,8 @@ Feature: Get Product
   Scenario: Get product with high price value
     Given I login as "demo" with password "password"
     And A product exists with the following details:
-      | name         | price   |
-      | Premium Item | 9999.99 |
+      | name  | Premium Item |
+      | price | 9999.99      |
     When I request the product with id "1"
     Then The response code is 200
     And The response contains a product with price "9999.99"
@@ -66,8 +64,9 @@ Feature: Get Product
   Scenario: Get product with positive stock
     Given I login as "demo" with password "password"
     And A product exists with the following details:
-      | name  | price | stock |
-      | Bread | 1.50  | 50    |
+      | name  | Bread |
+      | price | 1.50  |
+      | stock | 50    |
     When I request the product with id "1"
     Then The response code is 200
     And The response contains a product with stock "50"
@@ -75,8 +74,9 @@ Feature: Get Product
   Scenario: Get product with zero stock
     Given I login as "demo" with password "password"
     And A product exists with the following details:
-      | name   | price | stock |
-      | Cheese | 3.50  | 0     |
+      | name  | Cheese |
+      | price | 3.50   |
+      | stock | 0      |
     When I request the product with id "1"
     Then The response code is 200
     And The response contains a product with stock "0"
@@ -87,8 +87,9 @@ Feature: Get Product
   Scenario: Get available product
     Given I login as "demo" with password "password"
     And A product exists with the following details:
-      | name  | price | isAvailable |
-      | Candy | 0.50  | true        |
+      | name        | Candy |
+      | price       | 0.50  |
+      | isAvailable | true  |
     When I request the product with id "1"
     Then The response code is 200
     And The response contains a product with availability "true"
@@ -96,8 +97,9 @@ Feature: Get Product
   Scenario: Get unavailable product
     Given I login as "demo" with password "password"
     And A product exists with the following details:
-      | name         | price | isAvailable |
-      | Out of Stock | 2.00  | false       |
+      | name        | Out of Stock |
+      | price       | 2.00         |
+      | isAvailable | false        |
     When I request the product with id "1"
     Then The response code is 200
     And The response contains a product with availability "false"
@@ -108,8 +110,9 @@ Feature: Get Product
   Scenario: Get product with maximum rating
     Given I login as "demo" with password "password"
     And A product exists with the following details:
-      | name      | price | rating |
-      | Best Item | 10.00 | 5.0    |
+      | name   | Best Item |
+      | price  | 10.00     |
+      | rating | 5.0       |
     When I request the product with id "1"
     Then The response code is 200
     And The response contains a product with rating "5.0"
@@ -117,8 +120,9 @@ Feature: Get Product
   Scenario: Get product with minimum rating
     Given I login as "demo" with password "password"
     And A product exists with the following details:
-      | name       | price | rating |
-      | Worst Item | 1.00  | 0.0    |
+      | name   | Worst Item |
+      | price  | 1.00       |
+      | rating | 0.0        |
     When I request the product with id "1"
     Then The response code is 200
     And The response contains a product with rating "0.0"
@@ -150,8 +154,8 @@ Feature: Get Product
   Scenario: Get product by ID when not authenticated
     Given I'm not logged in
     And A product exists with the following details:
-      | name   | price |
-      | Orange | 2.50  |
+      | name  | Orange |
+      | price | 2.50   |
     When I request the product with id "1"
     Then The response code is 200
     And The response contains a product with name "Orange"
