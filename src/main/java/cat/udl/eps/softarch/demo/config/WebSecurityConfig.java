@@ -30,8 +30,9 @@ public class WebSecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/identity").authenticated()
                 .requestMatchers(HttpMethod.POST, "/users").anonymous()
                 .requestMatchers(HttpMethod.POST, "/users/*").denyAll()
-                .requestMatchers(HttpMethod.POST, "/*").authenticated()
-                .requestMatchers(HttpMethod.POST, "/*/*").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/*").authenticated()      // ← Protege POST /products
+
+                        .requestMatchers(HttpMethod.POST, "/*/*").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/*/*").authenticated()
                 .requestMatchers(HttpMethod.PATCH, "/*/*").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/*/*").authenticated()
