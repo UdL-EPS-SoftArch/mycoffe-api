@@ -48,6 +48,7 @@ public class CreateProductStepDefs {
         p.setProteins(0);
         p.setFats(0);
         p.setAvailable(true);  // Disponible por defecto
+        p.setPartOfLoyaltyProgram(false);
 
         // Sobrescribir con los datos del test
         data.forEach((key, value) -> {
@@ -66,6 +67,7 @@ public class CreateProductStepDefs {
                 case "pointsGiven" -> p.setPointsGiven(Integer.parseInt(value));
                 case "pointsCost" -> p.setPointsCost(Integer.parseInt(value));
                 case "isAvailable" -> p.setAvailable(Boolean.parseBoolean(value));
+                case "isPartOfLoyaltyProgram" -> p.setPartOfLoyaltyProgram(Boolean.parseBoolean(value));
                 case "brand" -> p.setBrand(value);
                 case "description" -> p.setDescription(value);
                 case "discount" -> p.setDiscount(value);
