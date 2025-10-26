@@ -12,6 +12,6 @@ public interface CustomerRepository extends CrudRepository<Customer, String>, Pa
     List<Customer> findByName(String name);
 
     boolean existsByName(String name);
-    boolean existsByEmail(String email);
+    boolean existsByPhoneNumber(String phoneNumber);
 
 }
