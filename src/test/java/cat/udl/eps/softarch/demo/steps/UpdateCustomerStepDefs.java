@@ -5,7 +5,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
+import cat.udl.eps.softarch.demo.domain.Customer;
+import cat.udl.eps.softarch.demo.repository.CustomerRepository;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,8 @@ public class UpdateCustomerStepDefs {
 
     @Autowired
     private StepDefs stepDefs;
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @When("I update the customer {string} with name {string} and phoneNumber {string}")
     public void iUpdateTheCustomerWithNameAndPhoneNumber(
@@ -87,6 +92,20 @@ public class UpdateCustomerStepDefs {
     @And("The customer {string} has email {string}")
     public void theCustomerHasEmail(String username, String email) throws Exception {
         stepDefs.result.andExpect(jsonPath("$.email", is(email)));
+    }
+
+    @Given("There is a registered customer with username {string} and password {string} and email {string} and phoneNumber {string}")
+    public void thereIsARegisteredCustomerWithUsernameAndPasswordAndEmailAndPhoneNumber(String username, String password, String email, String phone) {
+        if (!customerRepository.existsById(username)) {
+            Customer user = new Customer();
+            user.setEmail(email);
+            user.setId(username);
+            user.setName(username);
+            user.setPhoneNumber(phone);
+            user.setPassword(password);
+            user.encodePassword();
+            customerRepository.save(user);
+        }
     }
 }
 
