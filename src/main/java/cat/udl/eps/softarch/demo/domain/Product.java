@@ -83,9 +83,8 @@ public class Product extends UriEntity<Long>{
     @ManyToOne
     private Category category;
 
-    //TODO
-    // @ManyToMany
-    // private Set<Basket> baskets;
+    @ManyToMany
+    private Set<Basket> baskets;
 
     @ManyToOne
     private Inventory inventory;
