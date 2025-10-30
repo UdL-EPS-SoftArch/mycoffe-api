@@ -65,8 +65,84 @@ Feature: Register Product
       | description | Aproductsamplendinasidiasjdijsdijasidjsaidjasjdiasjdiajsdijsisajidojasidjaisdjaisjdisjdasijdodjisjdisajdoajsd   |
     Then The response code is 400
 
+  Scenario: Register a product with negative stock
+    Given I login as "demo" with password "password"
+    When I register a new product with the following details:
+      | name  | Water |
+      | stock | -10   |
+    Then The response code is 400
+
+  Scenario: Register a product with correct stock
+    Given I login as "demo" with password "password"
+    When I register a new product with the following details:
+      | name  | Water |
+      | stock | 15    |
+    Then The response code is 201
+
+  Scenario: Register a product with zero stock
+    Given I login as "demo" with password "password"
+    When I register a new product with the following details:
+      | name  | Water |
+      | stock | 0     |
+    Then The response code is 201
+
+  Scenario: Register a product with a valid barcode
+    Given I login as "demo" with password "password"
+    When I register a new product with the following details:
+      | name    | Water |
+      | barcode | 1234567890123 |
+    Then The response code is 201
+
+  Scenario: Rgeister a product with a invalid barcode
+    Given I login as "demo" with password "password"
+    When I register a new product with the following details:
+      | name    | Water |
+      | barcode | 12345 |
+    Then The response code is 400
+
+  Scenario: Register a product with a negative tax
+    Given I login as "demo" with password "password"
+    When I register a new product with the following details:
+      | name | Water |
+      | tax  | -5    |
+    Then The response code is 400
+
+  Scenario: Register a product with a valid tax
+    Given I login as "demo" with password "password"
+    When I register a new product with the following details:
+      | name | Water |
+      | tax  | 15    |
+    Then The response code is 201
+
+  Scenario: Register a product with valid rating
+    Given I login as "demo" with password "password"
+    When I register a new product with the following details:
+      | name   | Water |
+      | rating | 4.5   |
+    Then The response code is 201
+
+  Scenario: Register a product with invalid rating
+    Given I login as "demo" with password "password"
+    When I register a new product with the following details:
+        | name   | Water |
+        | rating | 6.0   |
+    Then The response code is 400
+
+  Scenario: Register a product with nutrition information
+    Given I login as "demo" with password "password"
+    When I register a new product with the following details:
+      | name     | Yogurt |
+      | kcal     | 100    |
+      | carbs    | 10     |
+      | proteins | 8      |
+      | fats     | 2      |
+    Then The response code is 201
+
+  Scenario: Register a product with negative nutritional values
+    Given I login as "demo" with password "password"
+    When I register a new product with the following details:
+      | name     | Yogurt |
+      | kcal     | -10    |
+    Then The response code is 400
 
 
-  ## TODO check user roleszº
-  ## check db initialization records
-  ## check if ...
