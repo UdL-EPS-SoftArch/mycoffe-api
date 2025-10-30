@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @BasePathAwareController
 public class IdentityController {
 
-  @RequestMapping("/identity")
-  public @ResponseBody
-  PersistentEntityResource getAuthenticatedUserIdentity(
-      PersistentEntityResourceAssembler resourceAssembler) {
-    User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    @RequestMapping("/identity")
+    public @ResponseBody
+    PersistentEntityResource getAuthenticatedUserIdentity(
+            PersistentEntityResourceAssembler resourceAssembler) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-    return resourceAssembler.toFullResource(user);
-  }
+        return resourceAssembler.toFullResource(user);
+    }
 }
