@@ -1,5 +1,6 @@
 package cat.udl.eps.softarch.demo.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -25,6 +26,7 @@ public class Product extends UriEntity<Long>{
     @Column(unique = true, nullable = false)
     private String name;
 
+    @org.hibernate.validator.constraints.Length(max = 100)
     @Column(length = 100)
     private String description;
 
@@ -43,6 +45,7 @@ public class Product extends UriEntity<Long>{
     @PositiveOrZero
     private BigDecimal tax;
 
+    @JsonProperty("available")
     private boolean isAvailable;
 
     private String promotions;
@@ -68,7 +71,8 @@ public class Product extends UriEntity<Long>{
     
     @PositiveOrZero
     private Integer pointsCost;  // Points needed to redeem this product
-    
+
+    @JsonProperty("partOfLoyaltyProgram")
     private boolean isPartOfLoyaltyProgram;
 
     
@@ -79,9 +83,8 @@ public class Product extends UriEntity<Long>{
     @ManyToOne
     private Category category;
 
-    //TODO
-    // @ManyToMany
-    // private Set<Basket> baskets;
+    @ManyToMany
+    private Set<Basket> baskets;
 
     @ManyToOne
     private Inventory inventory;
