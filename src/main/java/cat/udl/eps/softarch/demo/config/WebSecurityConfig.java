@@ -27,14 +27,20 @@ public class WebSecurityConfig {
     @Bean
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers(HttpMethod.GET, "/identity").authenticated()
-                .requestMatchers(HttpMethod.POST, "/users").anonymous()
-                .requestMatchers(HttpMethod.POST, "/users/*").denyAll()
-                .requestMatchers(HttpMethod.POST, "/*").authenticated()
-                .requestMatchers(HttpMethod.POST, "/*/*").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/*/*").authenticated()
-                .requestMatchers(HttpMethod.PATCH, "/*/*").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/*/*").authenticated()
+                        // 1. Ver negocios (GET): Permitido para todos.
+                        .requestMatchers(HttpMethod.GET, "/businesses", "/businesses/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/businesses").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/businesses/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/businesses/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/businesses/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/identity").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/users").anonymous()
+                        .requestMatchers(HttpMethod.POST, "/users/*").denyAll()
+                        .requestMatchers(HttpMethod.POST, "/*").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/*/*").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/*/*").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/*/*").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/*/*").authenticated()
                 .anyRequest().permitAll())
             .csrf((csrf) -> csrf.disable())
             .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
