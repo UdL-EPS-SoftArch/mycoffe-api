@@ -23,7 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class WebSecurityConfig {
-    @Value("${allowed-origins}")
+    @Value("${allowed-origins:*}")
     String[] allowedOrigins;
 
     @Bean
