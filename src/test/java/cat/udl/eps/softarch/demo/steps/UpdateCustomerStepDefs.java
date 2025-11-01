@@ -93,19 +93,5 @@ public class UpdateCustomerStepDefs {
     public void theCustomerHasEmail(String username, String email) throws Exception {
         stepDefs.result.andExpect(jsonPath("$.email", is(email)));
     }
-
-    @Given("There is a registered customer with username {string} and password {string} and email {string} and phoneNumber {string}")
-    public void thereIsARegisteredCustomerWithUsernameAndPasswordAndEmailAndPhoneNumber(String username, String password, String email, String phone) {
-        if (!customerRepository.existsById(username)) {
-            Customer user = new Customer();
-            user.setEmail(email);
-            user.setId(username);
-            user.setName(username);
-            user.setPhoneNumber(phone);
-            user.setPassword(password);
-            user.encodePassword();
-            customerRepository.save(user);
-        }
-    }
 }
 
