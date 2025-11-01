@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import cat.udl.eps.softarch.demo.domain.Customer;
 import cat.udl.eps.softarch.demo.repository.CustomerRepository;
@@ -77,7 +76,7 @@ public class RegisterCustomerStepDefs {
                                 .accept(MediaType.APPLICATION_JSON)
                                 .with(AuthenticationStepDefs.authenticate()))
                 .andDo(print())
-                .andExpect(jsonPath("$.id", is(username)))
+                .andExpect(jsonPath("$.name", is(username)))
                 .andExpect(jsonPath("$.email", is(email)))
                 .andExpect(jsonPath("$.phoneNumber", is(phoneNumber)))
                 .andExpect(jsonPath("$.password").doesNotExist());
