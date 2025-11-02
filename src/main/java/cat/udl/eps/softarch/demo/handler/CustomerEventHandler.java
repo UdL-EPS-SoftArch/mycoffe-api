@@ -57,6 +57,22 @@ public class CustomerEventHandler {
     @HandleBeforeDelete
     public void handleCustomerPreDelete(Customer customer) {
         logger.info("Before deleting: {}", customer.toString());
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        // Si no hay autenticación o el usuario es anónimo → no permitido
+        if (auth == null || !auth.isAuthenticated() || auth.getName().equals("anonymousUser")) {
+            throw new AccessDeniedException("You must be logged in to delete a customer");
+        }
+
+        String currentUsername = auth.getName();
+        String customerUsername = customer.getId();
+
+        // Solo el mismo usuario puede borrarse
+        if (!currentUsername.equals(customerUsername)) {
+            logger.warn("User {} tried to delete customer {}", currentUsername, customerUsername);
+            throw new AccessDeniedException("You can only delete your own profile");
+        }
     }
 
     @HandleBeforeLinkSave
