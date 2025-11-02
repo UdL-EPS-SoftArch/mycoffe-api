@@ -30,6 +30,8 @@ public class WebSecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/identity").authenticated()
                 .requestMatchers(HttpMethod.POST, "/users").anonymous()
                 .requestMatchers(HttpMethod.POST, "/users/*").denyAll()
+                .requestMatchers(HttpMethod.POST, "/customers").anonymous()
+                .requestMatchers(HttpMethod.POST, "/customers/*").denyAll()
                 .requestMatchers(HttpMethod.POST, "/*").authenticated()
                 .requestMatchers(HttpMethod.POST, "/*/*").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/*/*").authenticated()
