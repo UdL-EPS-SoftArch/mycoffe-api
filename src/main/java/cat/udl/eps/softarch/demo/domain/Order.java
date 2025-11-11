@@ -1,6 +1,7 @@
 package cat.udl.eps.softarch.demo.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -36,6 +37,7 @@ public class Order extends UriEntity<Long> {
     }
 
     @ManyToMany
+    @JsonIdentityReference(alwaysAsId = true)
     private Set<Product> products;
 
     @ManyToOne
