@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -13,15 +12,11 @@ import java.util.Set;
 @Entity
 @Table(name="order")
 @Data
-public class Order extends UriEntity<String>{
+public class Order extends UriEntity<Long> {
 
-    /**
-     * Attributes are now defined but they are not probably the final variable.
-     */
-
-    @Setter
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @NotNull
     private LocalDateTime created;
@@ -45,10 +40,4 @@ public class Order extends UriEntity<String>{
 
     @ManyToOne
     private Customer customer;
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
 }
