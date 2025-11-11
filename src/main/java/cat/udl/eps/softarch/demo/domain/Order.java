@@ -33,7 +33,7 @@ public class Order extends UriEntity<Long> {
     private Status status;
 
     public enum Status {
-        RECEIVED, CANCELLED, IN_PROCESS, READY, PICKED
+        SENT, RECEIVED, CANCELLED, IN_PROCESS, READY, PICKED
     }
 
     @ManyToMany
