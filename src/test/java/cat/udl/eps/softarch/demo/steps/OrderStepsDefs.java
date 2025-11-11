@@ -96,26 +96,27 @@ public class OrderStepsDefs {
     // Create order with authentication
     // ==============================
     @When("I create an order with:")
-    public void i_create_an_order_with(io.cucumber.datatable.DataTable dataTable) {
-        String url = "http://localhost:8080/api/orders";
+    public void i_create_an_order_with(io.cucumber.datatable.DataTable dataTable) throws Exception {
+        Map<String, String> data = dataTable.asMaps().getFirst();
+        String productName = data.get("product");
+        int quantity = Integer.parseInt(data.get("quantity"));
+        Product product = productRepository.findByName(productName).getFirst();
 
-        Map<String, Object> data = dataTable.asMaps().get(0);
-        String product = data.get("product").toString();
-        int quantity = Integer.parseInt(data.get("quantity").toString());
+        Order order = new Order();
+        order.setCreated(ZonedDateTime.now());
+        order.setPaymentMethod("Card");
+        order.setServeWhen(order.getCreated().plusMinutes(10));
+        order.setStatus(Order.Status.SENT);
+        order.setProducts(Set.of(product));
 
-        String body = String.format("""
-        {
-          "product": "%s",
-          "quantity": %d
-        }
-        """, product, quantity);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        if (token != null) headers.set("Authorization", "Bearer " + token);
-
-        HttpEntity<String> request = new HttpEntity<>(body, headers);
-        lastResponse = restTemplate.postForEntity(url, request, String.class);
+        stepDefs.result = stepDefs.mockMvc.perform(
+                post("/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(stepDefs.mapper.writeValueAsString(order))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
     }
 
     // ===================================================
