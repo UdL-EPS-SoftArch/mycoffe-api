@@ -4,19 +4,18 @@ Feature: Order Management
   I want to create and consult my orders
 
   Background:
-    Given the following users exist:
-      | username | password | role   |
-      | user1    | pass123  | USER   |
-      | admin1   | admin123 | ADMIN  |
-
-    And the following products exist:
-      | name        | price |
-      | Espresso    | 1.50  |
-      | Cappuccino  | 2.20  |
+    Given There is a registered user with username "user1" and password "pass123" and email "user1@mycoffee.app"
+    And There is a registered admin with username "admin1" and password "admin123" and email "admin1@mycoffee.app"
+    And A product exists with the following details:
+      | name    | Espresso |
+      | price   | 1.50     |
+    And A product exists with the following details:
+      | name    | Cappuccino |
+      | price   | 2.20       |
 
   # 1. Create an order successfully
   Scenario: User creates a new order successfully
-    Given I am authenticated as "user1" with password "pass123"
+    Given I login as "user1" with password "pass123"
     When I create an order with:
       | product    | quantity |
       | Espresso   | 2        |
