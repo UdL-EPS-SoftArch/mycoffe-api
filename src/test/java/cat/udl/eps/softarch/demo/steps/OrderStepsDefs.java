@@ -1,23 +1,40 @@
 package cat.udl.eps.softarch.demo.steps;
 
+import cat.udl.eps.softarch.demo.domain.Order;
+import cat.udl.eps.softarch.demo.domain.Product;
+import cat.udl.eps.softarch.demo.repository.ProductRepository;
 import io.cucumber.java.en.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
 import java.util.Map;
+import java.util.Set;
 
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class OrderStepsDefs {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final StepDefs stepDefs;
+    private final ProductRepository productRepository;
 
+    private RestTemplate restTemplate;
     private ResponseEntity<String> lastResponse;
     private String token;
 
+    public OrderStepsDefs(StepDefs stepDefs, ProductRepository productRepository) {
+        this.stepDefs = stepDefs;
+        this.productRepository = productRepository;
+    }
 
     @When("I register a new order with id {string}")
     public void i_register_a_new_order_with_id(String id) {
@@ -108,9 +125,9 @@ public class OrderStepsDefs {
     public void i_attempt_to_create_an_order_with(io.cucumber.datatable.DataTable dataTable) {
         String url = "http://localhost:8080/api/orders";
 
-        Map<String, Object> data = dataTable.asMaps().get(0);
-        String product = data.get("product").toString();
-        int quantity = Integer.parseInt(data.get("quantity").toString());
+        Map<String, String> data = dataTable.asMaps().getFirst();
+        String product = data.get("product");
+        int quantity = Integer.parseInt(data.get("quantity"));
 
         String body = String.format("""
         {
