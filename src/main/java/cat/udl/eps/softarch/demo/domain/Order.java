@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
 import java.util.Set;
 
 @Entity
-@Table(name="order")
+@Table(name = "order_table")
 @Data
 public class Order extends UriEntity<Long> {
 
