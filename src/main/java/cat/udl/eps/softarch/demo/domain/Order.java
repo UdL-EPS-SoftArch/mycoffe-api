@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Set;
 
 @Entity
@@ -19,10 +19,10 @@ public class Order extends UriEntity<Long> {
     private Long id;
 
     @NotNull
-    private LocalDateTime created;
+    private ZonedDateTime created;
 
     @NotNull
-    private LocalDateTime serveWhen;
+    private ZonedDateTime serveWhen;
 
     @NotBlank
     private String paymentMethod;
