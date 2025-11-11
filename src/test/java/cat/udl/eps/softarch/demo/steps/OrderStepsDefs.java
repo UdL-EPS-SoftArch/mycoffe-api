@@ -173,7 +173,6 @@ public class OrderStepsDefs {
         }
     }
 
-
     // ============================
     // Retrieve order
     // ============================
@@ -204,20 +203,18 @@ public class OrderStepsDefs {
         lastResponse = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
     }
 
-    // ============================
-    // Validations
-    // ============================
-    @Then("the response status should be {int}")
-    public void the_response_status_should_be(Integer statusCode) {
-        assertNotNull(lastResponse, "No response received");
-        assertEquals(statusCode, lastResponse.getStatusCodeValue());
-    }
-
-    @Then("the order should exist in the system for user {string}")
-    public void the_order_should_exist_in_the_system_for_user(String username) {
-        assertNotNull(lastResponse);
-        assertEquals(201, lastResponse.getStatusCodeValue());
-        assertTrue(lastResponse.getBody().contains(username));
+    @Then("The order should exist and include the product {string}")
+    public void the_order_should_exist_in_the_system_for_user(String productName) throws Exception {
+        String newOrderUri = stepDefs.result.andReturn().getResponse().getHeader("Location");
+        stepDefs.result = stepDefs.mockMvc.perform(
+                        get(newOrderUri + "/products")
+                                .accept(MediaType.APPLICATION_JSON)
+                                .characterEncoding(StandardCharsets.UTF_8)
+                                .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.products[*].name",
+                        hasItem(is(productName))));
     }
 
     @Then("the response should contain the order details")

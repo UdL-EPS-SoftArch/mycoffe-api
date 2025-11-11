@@ -19,8 +19,8 @@ Feature: Order Management
     When I create an order with:
       | product    | quantity |
       | Espresso   | 2        |
-    Then the response status should be 201
-    And the order should exist in the system for user "user1"
+    Then The response code is 201
+    And The order should exist and include the product "Espresso"
 
   # 2. Error when creating an order without authentication
   Scenario: Create order without authentication
