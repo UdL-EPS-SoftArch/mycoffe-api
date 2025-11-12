@@ -16,26 +16,34 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class WebSecurityConfig {
-    @Value("${allowed-origins}")
+    @Value("${allowed-origins:*}")
     String[] allowedOrigins;
 
     @Bean
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers(HttpMethod.GET, "/identity").authenticated()
-                .requestMatchers(HttpMethod.POST, "/users").anonymous()
-                .requestMatchers(HttpMethod.POST, "/users/*").denyAll()
-                .requestMatchers(HttpMethod.POST, "/*").authenticated()
-                .requestMatchers(HttpMethod.POST, "/*/*").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/*/*").authenticated()
-                .requestMatchers(HttpMethod.PATCH, "/*/*").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/*/*").authenticated()
-                .anyRequest().permitAll())
+            // 1. Ver negocios (GET): Permitido para todos.
+            .requestMatchers(HttpMethod.GET, "/businesses", "/businesses/**").permitAll()
+            .requestMatchers(HttpMethod.POST, "/businesses").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.PUT, "/businesses/**").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.PATCH, "/businesses/**").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.DELETE, "/businesses/**").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.GET, "/identity").authenticated()
+            .requestMatchers(HttpMethod.POST, "/users").anonymous()
+            .requestMatchers(HttpMethod.POST, "/users/*").denyAll()
+            .requestMatchers(HttpMethod.POST, "/*").authenticated()
+            .requestMatchers(HttpMethod.POST, "/*/*").authenticated()
+            .requestMatchers(HttpMethod.PUT, "/*/*").authenticated()
+            .requestMatchers(HttpMethod.PATCH, "/*/*").authenticated()
+            .requestMatchers(HttpMethod.DELETE, "/*/*").authenticated()
+            .anyRequest().permitAll())
             .csrf((csrf) -> csrf.disable())
             .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .cors((cors) -> cors.configurationSource(corsConfigurationSource()))
@@ -46,7 +54,8 @@ public class WebSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOriginPatterns(Arrays.asList(allowedOrigins));
+        String[] origins = (allowedOrigins != null && allowedOrigins.length > 0) ? allowedOrigins : new String[]{"*"};
+        corsConfiguration.setAllowedOriginPatterns(Arrays.asList(origins));
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
         corsConfiguration.setAllowCredentials(true);
@@ -58,5 +67,10 @@ public class WebSecurityConfig {
     @Bean
     public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
         return new SecurityEvaluationContextExtension();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
