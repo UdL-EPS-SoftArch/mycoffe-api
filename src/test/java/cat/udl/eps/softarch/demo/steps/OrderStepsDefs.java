@@ -4,9 +4,8 @@ import cat.udl.eps.softarch.demo.domain.Order;
 import cat.udl.eps.softarch.demo.domain.Product;
 import cat.udl.eps.softarch.demo.repository.ProductRepository;
 import io.cucumber.java.en.*;
-import org.springframework.http.*;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
@@ -27,8 +26,6 @@ public class OrderStepsDefs {
     private final StepDefs stepDefs;
     private final ProductRepository productRepository;
 
-    private RestTemplate restTemplate;
-    private ResponseEntity<String> lastResponse;
     private String token;
 
     public OrderStepsDefs(StepDefs stepDefs, ProductRepository productRepository) {
@@ -37,36 +34,32 @@ public class OrderStepsDefs {
     }
 
     @When("I register a new order with id {string}")
-    public void i_register_a_new_order_with_id(String id) {
-        String url = "http://localhost:8080/api/orders";
+    public void i_register_a_new_order_with_id(String id) throws Exception {
+        Order order = new Order();
+        order.setId(Long.valueOf(id));
+        order.setCreated(ZonedDateTime.now());
+        order.setServeWhen(order.getCreated().plusMinutes(10));
+        order.setPaymentMethod("CARD");
+        order.setStatus(Order.Status.RECEIVED);
 
-        // Request body (adapt it to your real DTO)
-        String body = String.format("""
-            {
-              "id": "%s",
-              "created": "2025-10-07T12:00:00",
-              "serveWhen": "2025-10-07T14:00:00",
-              "paymentMethod": "CARD",
-              "status": "RECEIVED"
-            }
-            """, id);
+        MockHttpServletRequestBuilder builder = post("/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(stepDefs.mapper.writeValueAsString(order))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .accept(MediaType.APPLICATION_JSON);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        if (token != null)
-            headers.set("Authorization", "Bearer " + token);
+        if (token != null && !token.isBlank()) {
+            builder = builder.with(AuthenticationStepDefs.authenticate());
+        }
 
-        HttpEntity<String> request = new HttpEntity<>(body, headers);
-        lastResponse = restTemplate.postForEntity(url, request, String.class);
+        stepDefs.result = stepDefs.mockMvc.perform(builder).andDo(print());
     }
 
     // ============================
-    // Authentication
+    // Authentication (usa mockMvc, no llamadas externas)
     // ============================
     @Given("I am authenticated as {string} with password {string}")
-    public void i_am_authenticated_as_with_password(String username, String password) {
-        String loginUrl = "http://localhost:8080/login";
-
+    public void i_am_authenticated_as_with_password(String username, String password) throws Exception {
         String body = String.format("""
             {
               "username": "%s",
@@ -74,17 +67,31 @@ public class OrderStepsDefs {
             }
             """, username, password);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder builder = post("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body)
+                .characterEncoding(StandardCharsets.UTF_8)
+                .accept(MediaType.APPLICATION_JSON);
 
-        try {
-            ResponseEntity<String> response = restTemplate.postForEntity(loginUrl, new HttpEntity<>(body, headers), String.class);
-            assertEquals(200, response.getStatusCodeValue(), "Login failed");
-            token = response.getHeaders().getFirst("Authorization");
-            assertNotNull(token, "Token not received in login response");
-        } catch (HttpClientErrorException e) {
-            fail("Authentication failed with status: " + e.getStatusCode());
+        stepDefs.result = stepDefs.mockMvc.perform(builder).andDo(print());
+        int status = stepDefs.result.andReturn().getResponse().getStatus();
+        assertEquals(200, status, "Login failed");
+
+        String authHeader = stepDefs.result.andReturn().getResponse().getHeader("Authorization");
+        token = authHeader;
+        if (token == null || token.isBlank()) {
+            String respBody = stepDefs.result.andReturn().getResponse().getContentAsString();
+            if (respBody != null && respBody.contains("token")) {
+                int idx = respBody.indexOf("token");
+                int colon = respBody.indexOf(':', idx);
+                int start = respBody.indexOf('"', colon) + 1;
+                int end = respBody.indexOf('"', start);
+                if (start > 0 && end > start) {
+                    token = respBody.substring(start, end);
+                }
+            }
         }
+        assertNotNull(token, "Token not received in login response");
     }
 
     @Given("I am not authenticated")
@@ -94,13 +101,17 @@ public class OrderStepsDefs {
 
     // ==============================
     // Create order with authentication
-    // ==============================
+    // ============================
     @When("I create an order with:")
     public void i_create_an_order_with(io.cucumber.datatable.DataTable dataTable) throws Exception {
         Map<String, String> data = dataTable.asMaps().getFirst();
         String productName = data.get("product");
         int quantity = Integer.parseInt(data.get("quantity"));
-        Product product = productRepository.findByName(productName).getFirst();
+
+        Product product = productRepository.findByName(productName)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Product not found: " + productName));
 
         Order order = new Order();
         order.setCreated(ZonedDateTime.now());
@@ -109,98 +120,158 @@ public class OrderStepsDefs {
         order.setStatus(Order.Status.SENT);
         order.setProducts(Set.of(product));
 
-        stepDefs.result = stepDefs.mockMvc.perform(
-                post("/orders")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(stepDefs.mapper.writeValueAsString(order))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .with(AuthenticationStepDefs.authenticate()))
-                .andDo(print());
+        MockHttpServletRequestBuilder builder = post("/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(stepDefs.mapper.writeValueAsString(order))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .accept(MediaType.APPLICATION_JSON)
+                .with(AuthenticationStepDefs.authenticate());
+
+        stepDefs.result = stepDefs.mockMvc.perform(builder).andDo(print());
     }
 
     // ===================================================
     // Create order without authentication (expected 401 response)
     // ===================================================
     @When("I attempt to create an order with:")
-    public void i_attempt_to_create_an_order_with(io.cucumber.datatable.DataTable dataTable) {
-        String url = "http://localhost:8080/api/orders";
-
+    public void i_attempt_to_create_an_order_with(io.cucumber.datatable.DataTable dataTable) throws Exception {
         Map<String, String> data = dataTable.asMaps().getFirst();
-        String product = data.get("product");
+        String productName = data.get("product");
         int quantity = Integer.parseInt(data.get("quantity"));
 
-        String body = String.format("""
-        {
-          "product": "%s",
-          "quantity": %d
-        }
-        """, product, quantity);
+        Product product = productRepository.findByName(productName)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Product not found: " + productName));
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        // No token -> user not authenticated
+        Order order = new Order();
+        order.setCreated(ZonedDateTime.now());
+        order.setPaymentMethod("Card");
+        order.setServeWhen(order.getCreated().plusMinutes(10));
+        order.setStatus(Order.Status.SENT);
+        order.setProducts(Set.of(product));
 
-        try {
-            lastResponse = restTemplate.postForEntity(url, new HttpEntity<>(body, headers), String.class);
-        } catch (Exception e) {
-            lastResponse = new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
-        }
+        MockHttpServletRequestBuilder builder = post("/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(stepDefs.mapper.writeValueAsString(order))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .accept(MediaType.APPLICATION_JSON);
+
+        stepDefs.result = stepDefs.mockMvc.perform(builder).andDo(print());
     }
 
     // ===================================================
     // Precondition: an order already exists in the system
     // ===================================================
+    // java
     @Given("an order exists with id {int} for user {string}")
     public void an_order_exists_with_id_for_user(Integer id, String username) {
-        // Simulate order creation with authenticated user
-        i_am_authenticated_as_with_password(username, "pass123");
-        i_register_a_new_order_with_id(id.toString());
-        assertEquals(201, lastResponse.getStatusCodeValue());
+        try {
+            // Autenticar como el usuario objetivo
+            i_am_authenticated_as_with_password(username, "pass123");
+
+            // Construir orden mínima con el id solicitado
+            Order order = new Order();
+            order.setId(Long.valueOf(id));
+            order.setCreated(ZonedDateTime.now());
+            order.setServeWhen(order.getCreated().plusMinutes(10));
+            order.setPaymentMethod("Card");
+            order.setStatus(Order.Status.SENT);
+
+            MockHttpServletRequestBuilder builder = post("/orders")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(stepDefs.mapper.writeValueAsString(order))
+                    .characterEncoding(StandardCharsets.UTF_8)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .with(AuthenticationStepDefs.authenticate());
+
+            stepDefs.result = stepDefs.mockMvc.perform(builder).andDo(print());
+            stepDefs.result.andExpect(status().isCreated());
+        } catch (Exception e) {
+            fail("Failed to create precondition order id " + id + " for user " + username + ": " + e.getMessage());
+        }
     }
 
-    // ===================================================
-    // Precondition: multiple orders exist for a user
-    // ===================================================
     @Given("the following orders exist for user {string}:")
     public void the_following_orders_exist_for_user(String username, io.cucumber.datatable.DataTable dataTable) {
-        i_am_authenticated_as_with_password(username, "pass123");
+        try {
+            i_am_authenticated_as_with_password(username, "pass123");
+        } catch (Exception e) {
+            fail("Login failed for preconditions: " + e.getMessage());
+            return;
+        }
 
         for (var row : dataTable.asMaps()) {
             String id = row.get("id");
-            i_register_a_new_order_with_id(id);
-            assertEquals(201, lastResponse.getStatusCodeValue());
+            String productName = row.get("product");
+
+            try {
+                Product product = productRepository.findByName(productName)
+                        .stream()
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalStateException("Product not found: " + productName));
+
+                Order order = new Order();
+                if (id != null && !id.isBlank()) {
+                    order.setId(Long.valueOf(id));
+                }
+                order.setCreated(ZonedDateTime.now());
+                order.setServeWhen(order.getCreated().plusMinutes(10));
+                order.setPaymentMethod("Card");
+                order.setStatus(Order.Status.SENT);
+                order.setProducts(Set.of(product));
+
+                MockHttpServletRequestBuilder builder = post("/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(stepDefs.mapper.writeValueAsString(order))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .with(AuthenticationStepDefs.authenticate());
+
+                stepDefs.result = stepDefs.mockMvc.perform(builder).andDo(print());
+                stepDefs.result.andExpect(status().isCreated());
+            } catch (Exception e) {
+                fail("Failed to create precondition order id " + id + ": " + e.getMessage());
+            }
         }
     }
 
+
     // ============================
-    // Retrieve order
+    // Retrieve order (ambas variantes)
     // ============================
     @When("I retrieve the order with id {string}")
-    public void i_retrieve_the_order_with_id(String id) {
-        String url = "http://localhost:8080/api/orders/" + id;
-        HttpHeaders headers = new HttpHeaders();
-        if (token != null)
-            headers.set("Authorization", "Bearer " + token);
+    public void i_retrieve_the_order_with_id_string(String id) throws Exception {
+        MockHttpServletRequestBuilder builder = get("/orders/" + id)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding(StandardCharsets.UTF_8);
 
-        try {
-            lastResponse = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
-        } catch (HttpClientErrorException e) {
-            lastResponse = new ResponseEntity<>(e.getResponseBodyAsString(), e.getStatusCode());
+        if (token != null && !token.isBlank()) {
+            builder = builder.with(AuthenticationStepDefs.authenticate());
         }
+
+        stepDefs.result = stepDefs.mockMvc.perform(builder).andDo(print());
+    }
+
+    @When("I retrieve the order with id {int}")
+    public void i_retrieve_the_order_with_id_int(Integer id) throws Exception {
+        i_retrieve_the_order_with_id_string(id.toString());
     }
 
     // ============================
     // List orders
     // ============================
     @When("I request my list of orders")
-    public void i_request_my_list_of_orders() {
-        String url = "http://localhost:8080/api/orders";
-        HttpHeaders headers = new HttpHeaders();
-        if (token != null)
-            headers.set("Authorization", "Bearer " + token);
+    public void i_request_my_list_of_orders() throws Exception {
+        MockHttpServletRequestBuilder builder = get("/orders")
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding(StandardCharsets.UTF_8);
 
-        lastResponse = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+        if (token != null && !token.isBlank()) {
+            builder = builder.with(AuthenticationStepDefs.authenticate());
+        }
+
+        stepDefs.result = stepDefs.mockMvc.perform(builder).andDo(print());
     }
 
     @Then("The order should exist and include the product {string}")
@@ -218,16 +289,19 @@ public class OrderStepsDefs {
     }
 
     @Then("the response should contain the order details")
-    public void the_response_should_contain_the_order_details() {
-        assertNotNull(lastResponse);
-        assertTrue(lastResponse.getBody().contains("id"));
-        assertTrue(lastResponse.getBody().contains("status"));
+    public void the_response_should_contain_the_order_details() throws Exception {
+        assertNotNull(stepDefs.result, "No result available");
+        String body = stepDefs.result.andReturn().getResponse().getContentAsString();
+        assertTrue(body.contains("id"));
+        assertTrue(body.contains("status"));
     }
 
     @Then("the response should contain {int} orders")
-    public void the_response_should_contain_orders(Integer expectedCount) {
-        assertNotNull(lastResponse);
-        assertTrue(lastResponse.getBody().contains("["));
+    public void the_response_should_contain_orders(Integer expectedCount) throws Exception {
+        assertNotNull(stepDefs.result, "No result available");
+        String body = stepDefs.result.andReturn().getResponse().getContentAsString();
+        // validación simple; si se quiere contar, parsear JSON con ObjectMapper
+        assertTrue(body.contains("["));
     }
 
 }

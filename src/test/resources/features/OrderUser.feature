@@ -34,7 +34,7 @@ Feature: Order Management
   Scenario: Retrieve an existing order
     Given I login as "user1" with password "pass123"
     And an order exists with id 1 for user "user1"
-    When I retrieve the order with id 1
+    When I retrieve the order with id "1"
     Then The response code is 200
     And the response should contain the order details
 
