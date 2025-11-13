@@ -27,6 +27,11 @@ public class WebSecurityConfig {
     @Bean
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((auth) -> auth
+                .requestMatchers(HttpMethod.GET, "/businesses", "/businesses/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/businesses").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/businesses/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/businesses/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/businesses/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/identity").authenticated()
                 .requestMatchers(HttpMethod.POST, "/users").anonymous()
                 .requestMatchers(HttpMethod.POST, "/users/*").denyAll()
