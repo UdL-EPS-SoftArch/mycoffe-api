@@ -4,7 +4,7 @@ Feature: Order Management
   I want to create and consult my orders
 
   Background:
-    Given There is a registered user with username "user1" and password "pass123" and email "user1@mycoffee.app"
+    Given There is a registered customer with username "customer1" and password "pass123" and email "customer1@mycoffee.app"
     And There is a registered admin with username "admin1" and password "admin123" and email "admin1@mycoffee.app"
     And A product exists with the following details:
       | name    | Espresso   |
@@ -15,7 +15,7 @@ Feature: Order Management
 
   # 1. Create an order successfully
   Scenario: User creates a new order successfully
-    Given I login as "user1" with password "pass123"
+    Given I login as "customer1" with password "pass123"
     When I create an order with:
       | product  | quantity |
       | Espresso | 2        |
@@ -32,32 +32,33 @@ Feature: Order Management
 
   # 3. Retrieve an existing order
   Scenario: Retrieve an existing order
-    Given I login as "user1" with password "pass123"
-    And an order exists for user "user1"
+    Given I login as "customer1" with password "pass123"
+    And an order exists for user "customer1" with password "pass123"
     When I retrieve the last created order
     Then The response code is 200
     And the response should contain the order details
 
   # 4. Retrieve a non-existing order
   Scenario: Retrieve a non-existing order
-    Given I login as "user1" with password "pass123"
-    When I retrieve the order with id 99999
+    Given I login as "customer1" with password "pass123"
+    When I retrieve the order with id "99999"
     Then The response code is 404
 
   # 5. List all orders for the user
   Scenario: List all orders for a user
-    Given I login as "user1" with password "pass123"
-    And the following orders exist for user "user1":
+    Given I login as "customer1" with password "pass123"
+    And the following orders exist for user "customer1":
       | product    | quantity |
       | Cappuccino | 1        |
       | Espresso   | 2        |
-    When I request my list of orders
+    When I request the list of orders by "customer1"
     Then The response code is 200
     And the response should contain 2 orders
 
   # 6. User trying to view another user's order
   Scenario: User tries to view another user's order
-    Given I login as "user1" with password "pass123"
-    And an order exists for user "admin1"
+    Given There is a registered customer with username "customer2" and password "pass123" and email "customer2@mycoffee.app"
+    And an order exists for user "customer2" with password "pass123"
+    And I login as "customer1" with password "pass123"
     When I retrieve the last created order
     Then The response code is 403

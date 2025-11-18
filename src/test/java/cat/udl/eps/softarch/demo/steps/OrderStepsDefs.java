@@ -1,7 +1,9 @@
 package cat.udl.eps.softarch.demo.steps;
 
+import cat.udl.eps.softarch.demo.domain.Customer;
 import cat.udl.eps.softarch.demo.domain.Order;
 import cat.udl.eps.softarch.demo.domain.Product;
+import cat.udl.eps.softarch.demo.repository.CustomerRepository;
 import cat.udl.eps.softarch.demo.repository.ProductRepository;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.*;
@@ -27,13 +29,15 @@ public class OrderStepsDefs {
 
     private final StepDefs stepDefs;
     private final ProductRepository productRepository;
+    private final CustomerRepository customerRepository;
 
     private String token;
     private String lastOrderId;
 
-    public OrderStepsDefs(StepDefs stepDefs, ProductRepository productRepository) {
+    public OrderStepsDefs(StepDefs stepDefs, ProductRepository productRepository, CustomerRepository customerRepository) {
         this.stepDefs = stepDefs;
         this.productRepository = productRepository;
+        this.customerRepository = customerRepository;
     }
 
     // =====================
@@ -120,11 +124,11 @@ public class OrderStepsDefs {
     // =====================
     // Precondition: an order exists for the user
     // =====================
-    @Given("an order exists for user {string}")
-    public void an_order_exists_for_user(String username) {
+    @Given("an order exists for user {string} with password {string}")
+    public void an_order_exists_for_user(String username, String password) {
         try {
             AuthenticationStepDefs.currentUsername = username;
-            AuthenticationStepDefs.currentPassword = username.equals("admin1") ? "admin123" : "pass123";
+            AuthenticationStepDefs.currentPassword = password;
 
             Product product = StreamSupport.stream(productRepository.findAll().spliterator(), false)
                     .findFirst()
@@ -197,20 +201,11 @@ public class OrderStepsDefs {
     // =====================
     @When("I retrieve the order with id {string}")
     public void i_retrieve_the_order_with_id_string(String id) throws Exception {
-        MockHttpServletRequestBuilder builder = get("/orders/" + id)
-                .accept(MediaType.APPLICATION_JSON)
-                .characterEncoding(StandardCharsets.UTF_8);
-
-        if (token != null && !token.isBlank()) {
-            builder = builder.with(AuthenticationStepDefs.authenticate());
-        }
-
-        stepDefs.result = stepDefs.mockMvc.perform(builder).andDo(print());
-    }
-
-    @When("I retrieve the order with id {int}")
-    public void i_retrieve_the_order_with_id(Integer id) throws Exception {
-        i_retrieve_the_order_with_id_string(id.toString());
+        stepDefs.result = stepDefs.mockMvc.perform(
+                get("/orders/" + id)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .with(AuthenticationStepDefs.authenticate())).andDo(print());
     }
 
     @When("I retrieve the last created order")
@@ -222,17 +217,16 @@ public class OrderStepsDefs {
     // =====================
     // List orders
     // =====================
-    @When("I request my list of orders")
-    public void i_request_my_list_of_orders() throws Exception {
-        MockHttpServletRequestBuilder builder = get("/orders")
-                .accept(MediaType.APPLICATION_JSON)
-                .characterEncoding(StandardCharsets.UTF_8);
+    @When("I request the list of orders by {string}")
+    public void i_request_my_list_of_orders(String customerName) throws Exception {
+        Customer customer = customerRepository.findById(customerName).orElseThrow();
 
-        if (token != null && !token.isBlank()) {
-            builder = builder.with(AuthenticationStepDefs.authenticate());
-        }
-
-        stepDefs.result = stepDefs.mockMvc.perform(builder).andDo(print());
+        stepDefs.result = stepDefs.mockMvc.perform(
+                get("/orders/search/findByCustomer?customer={customerUri}", customer.getUri())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .with(AuthenticationStepDefs.authenticate()))
+                .andDo(print());
     }
 
     // =====================
