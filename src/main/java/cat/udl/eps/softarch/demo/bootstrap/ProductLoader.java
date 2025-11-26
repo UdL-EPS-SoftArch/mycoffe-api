@@ -4,6 +4,7 @@ import cat.udl.eps.softarch.demo.domain.Product;
 import cat.udl.eps.softarch.demo.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import java.util.Set;
 import java.util.Arrays;
 
 @Component
+@Profile("!test")
 @RequiredArgsConstructor
 public class ProductLoader implements CommandLineRunner {
 
