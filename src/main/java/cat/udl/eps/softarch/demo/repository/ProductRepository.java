@@ -1,5 +1,7 @@
 package cat.udl.eps.softarch.demo.repository;
 
+import cat.udl.eps.softarch.demo.domain.Basket;
+import cat.udl.eps.softarch.demo.domain.Category;
 import cat.udl.eps.softarch.demo.domain.Product;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -23,8 +25,13 @@ public interface ProductRepository extends CrudRepository<Product, Long>, Paging
     List<Product> findByKcalLessThanEqual(int kcal);
     List<Product> findByIngredientsContaining(String ingredient);
     List<Product> findByAllergensContaining(String allergen);
+    List<Product> findByCategory(Category category);
 
-    //TODO  List<Product> findByOrders(Order order);
-    //      List<Product> findByBaskets(Basket basket);
+    // List<Product> findByOrders(Order order);
+    List<Product> findByBaskets(Basket basket);
 
+    // Loyalty related queries
+    List<Product> findByIsPartOfLoyaltyProgram(boolean isPartOfLoyaltyProgram);
+    List<Product> findByPointsCostLessThanEqual(Integer points);
+    List<Product> findByPointsGivenGreaterThan(Integer points);
 }

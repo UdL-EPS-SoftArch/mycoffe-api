@@ -1,12 +1,12 @@
 package cat.udl.eps.softarch.demo.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import jakarta.validation.constraints.Pattern;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Set;
 
 //Attributes and methods of Product Class that extends UriEntity
@@ -16,15 +16,17 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class    Product extends UriEntity<Long>{
+public class Product extends UriEntity<Long>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotEmpty
+    @Column(unique = true, nullable = false)
     private String name;
 
+    @org.hibernate.validator.constraints.Length(max = 100)
     @Column(length = 100)
     private String description;
 
@@ -43,6 +45,7 @@ public class    Product extends UriEntity<Long>{
     @PositiveOrZero
     private BigDecimal tax;
 
+    @JsonProperty("available")
     private boolean isAvailable;
 
     private String promotions;
@@ -62,25 +65,29 @@ public class    Product extends UriEntity<Long>{
     @DecimalMax(value = "5")
     private Double rating;
 
+    // Loyalty program related fields
+    @PositiveOrZero
+    private Integer pointsGiven; // Points given when purchasing this product
+    
+    @PositiveOrZero
+    private Integer pointsCost;  // Points needed to redeem this product
+
+    @JsonProperty("partOfLoyaltyProgram")
+    private boolean isPartOfLoyaltyProgram;
+
+    
     //TODO
     // @ManyToMany(mappedBy = "products")
     //    private Set<Order> orders;
 
+    @ManyToOne
+    private Category category;
 
-    //TODO private Category category;
+    @ManyToMany
+    private Set<Basket> baskets;
 
-    //TODO
-    // @ManyToMany
-    // private Set<Basket> baskets;
-
-
-    //TODO
-    // @OneToMany(cascade = CascadeType.ALL)
-    // private Set<Loyalty> loyalties;
-    //
-    //TODO
-    // @ManyToOne
-    // private Inventory inventory;
+    @ManyToOne
+    private Inventory inventory;
 
 
 }

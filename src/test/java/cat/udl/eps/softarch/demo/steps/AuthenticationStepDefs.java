@@ -33,4 +33,16 @@ public class AuthenticationStepDefs {
     public void iMNotLoggedIn() {
         currentUsername = currentPassword = null;
     }
+
+    @Given("^I'm logged in as admin$")
+    public void iMLoggedInAsAdmin() {
+        AuthenticationStepDefs.currentUsername = "admin";
+        AuthenticationStepDefs.currentPassword = "password";
+    }
+
+    @Given("^I'm logged in as regular user$")
+    public void iMLoggedInAsRegularUser() {
+        AuthenticationStepDefs.currentUsername = "user";
+        AuthenticationStepDefs.currentPassword = "password";
+    }
 }
